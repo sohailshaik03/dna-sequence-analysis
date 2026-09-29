@@ -17,8 +17,17 @@ def validate_dna(sequence):
     return all(base in valid_bases for base in sequence)
 
 
+def calculate_length(sequence):
+    """
+    Calculate the length of a DNA sequence.
+    """
+    return len(sequence)
+
+
+
 if __name__ == "__main__":
-    sequence = "ATGCGTAC"
+    sequence = "ATGC"
 
     print("Sequence:", sequence)
     print("Valid DNA:", validate_dna(sequence))
+    print("Length:", calculate_length(sequence))
