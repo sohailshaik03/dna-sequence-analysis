@@ -24,6 +24,19 @@ def calculate_length(sequence):
     return len(sequence)
 
 
+def count_bases(sequence):
+    """
+    Count the occurrences of each base in a DNA sequence.
+
+    Returns a dictionary with bases as keys and their counts as values.
+    """
+    sequence = sequence.upper()
+    counts={"A": sequence.count("A"),
+             "T": sequence.count("T"),
+             "G": sequence.count("G"),
+             "C": sequence.count("C"),
+             "N": sequence.count("N")}
+    return counts
 
 if __name__ == "__main__":
     sequence = "ATGCGTAC"
@@ -31,3 +44,4 @@ if __name__ == "__main__":
     print("Sequence:", sequence)
     print("Valid DNA:", validate_dna(sequence))
     print("Length:", calculate_length(sequence))
+    print("Base Counts:", count_bases(sequence))
