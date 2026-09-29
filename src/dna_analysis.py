@@ -75,6 +75,27 @@ def calculate_complement(sequence):
     }
 
     return "".join(complement[base] for base in sequence)
+
+
+
+
+def calculate_reverse_complement(sequence):
+    """
+    Calculate the reverse complement of a DNA sequence.
+
+    The reverse complement is obtained by first finding the complement
+    and then reversing the resulting sequence.
+    """
+
+    complement_sequence = calculate_complement(sequence)
+    return complement_sequence[::-1]
+
+
+
+
+
+
+
     
 if __name__ == "__main__":
     sequence = "ATGCGTAC"
@@ -85,3 +106,4 @@ if __name__ == "__main__":
     print("Base Counts:", count_bases(sequence))
     print("GC Content:", gc_content(sequence))
     print("Complement:", calculate_complement(sequence))
+    print("Reverse Complement:", calculate_reverse_complement(sequence))
