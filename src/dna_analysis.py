@@ -18,7 +18,7 @@ def validate_dna(sequence):
 
 
 if __name__ == "__main__":
-    sequence = "ATGCGTAC"
+    sequence = "ATGCGTACX"
 
     print("Sequence:", sequence)
     print("Valid DNA:", validate_dna(sequence))
