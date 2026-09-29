@@ -54,6 +54,28 @@ def gc_content(sequence):
 
     return (gc_count / total_count) * 100
 
+
+def calculate_complement(sequence):
+    """
+    Calculate the complement of a DNA sequence.
+
+    A <-> T
+    G <-> C
+    N -> N (remains unchanged)
+    """
+
+    sequence= sequence.upper()
+
+    complement={
+        "A": "T",
+        "T": "A",
+        "G": "C",
+        "C": "G",
+        "N": "N"
+    }
+
+    return "".join(complement[base] for base in sequence)
+    
 if __name__ == "__main__":
     sequence = "ATGCGTAC"
 
@@ -62,3 +84,4 @@ if __name__ == "__main__":
     print("Length:", calculate_length(sequence))
     print("Base Counts:", count_bases(sequence))
     print("GC Content:", gc_content(sequence))
+    print("Complement:", calculate_complement(sequence))
