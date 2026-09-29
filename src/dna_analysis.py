@@ -26,7 +26,7 @@ def calculate_length(sequence):
 
 
 if __name__ == "__main__":
-    sequence = "ATGC"
+    sequence = "ATGCGTAC"
 
     print("Sequence:", sequence)
     print("Valid DNA:", validate_dna(sequence))
