@@ -38,6 +38,22 @@ def count_bases(sequence):
              "N": sequence.count("N")}
     return counts
 
+
+def gc_content(sequence):
+    """
+    Calculate the GC content of a DNA sequence.
+
+    GC content is the percentage of bases that are either G or C.
+    """
+    sequence = sequence.upper()
+    gc_count = sequence.count("G") + sequence.count("C")
+    total_count = len(sequence)
+
+    if total_count == 0:
+        return 0.0
+
+    return (gc_count / total_count) * 100
+
 if __name__ == "__main__":
     sequence = "ATGCGTAC"
 
@@ -45,3 +61,4 @@ if __name__ == "__main__":
     print("Valid DNA:", validate_dna(sequence))
     print("Length:", calculate_length(sequence))
     print("Base Counts:", count_bases(sequence))
+    print("GC Content:", gc_content(sequence))
