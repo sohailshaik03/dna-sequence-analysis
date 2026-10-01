@@ -163,6 +163,9 @@ def calculate_known_base_percentage(sequence):
 
     return known_percentage
 
+
+
+
 def generate_qc_summary(sequence):
     """
     Generate a basic quality-control summary
@@ -191,8 +194,33 @@ def generate_qc_summary(sequence):
 
         summary["complement"] = calculate_complement(sequence)
         summary["reverse_complement"] = calculate_reverse_complement(sequence)
-
+    summary["qc_status"] = determine_qc_status(summary)
     return summary
+
+
+
+
+
+
+
+def determine_qc_status(summary):
+    """
+    Determine the quality-control status of a DNA sequence.
+
+    Returns:
+        FAIL if the sequence contains invalid bases.
+        PASS WITH WARNING if the sequence contains ambiguous bases (N).
+        PASS if the sequence is valid and contains no ambiguous bases.
+    """
+
+    if not summary["valid"]:
+        return "FAIL"
+
+    if summary["n_content"] > 0:
+        return "PASS WITH WARNING"
+
+    return "PASS"
+
 
 
 
@@ -207,7 +235,7 @@ def print_qc_report(summary):
     print("Sequence:", summary["sequence"])
     print("Valid DNA:", summary["valid"])
     print("Length:", summary["length"], "bp")
-
+    print("QC Status:", summary["qc_status"])
     if not summary["valid"]:
         print("\nValidation:")
         print("  Status: FAIL")
@@ -238,8 +266,10 @@ def print_qc_report(summary):
     print("\nComplement:", summary["complement"])
     print("Reverse Complement:", summary["reverse_complement"])
 
-    print("\nQC Status: PASS")
+    print("\nQC Status:", summary["qc_status"])
     print("============================================")
+
+
 
 
 
@@ -289,7 +319,7 @@ def calculate_reverse_complement(sequence):
 
     
 if __name__ == "__main__":
-    sequence = "ATGCNN"
+    sequence = "ATGCNA"
 
    
     summary = generate_qc_summary(sequence)
