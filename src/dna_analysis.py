@@ -1,43 +1,134 @@
-def validate_dna(sequence):
-    """
-    Validate whether a sequence contains only accepted DNA bases.
 
-    Accepted bases:
-    A = Adenine
-    T = Thymine
-    G = Guanine
-    C = Cytosine
-    N = Unknown/ambiguous nucleotide
+
+CANONICAL_BASES = {"A", "T", "G", "C"}
+
+IUPAC_AMBIGUOUS_BASES = {
+    "N", "R", "Y", "S", "W",
+    "K", "M", "B", "D", "H", "V"
+}
+
+GAP_SYMBOLS = {"-"}
+
+
+COMPLEMENT_MAP = {
+    "A": "T",
+    "T": "A",
+    "G": "C",
+    "C": "G",
+
+    "R": "Y",
+    "Y": "R",
+    "S": "S",
+    "W": "W",
+    "K": "M",
+    "M": "K",
+    "B": "V",
+    "V": "B",
+    "D": "H",
+    "H": "D",
+    "N": "N",
+
+    "-": "-"
+}
+
+
+def classify_character(character):
+    """
+    Classify a single DNA sequence character.
+
+    Returns:
+        "canonical"  -> A, T, G, C
+        "ambiguous"  -> IUPAC ambiguity code
+        "gap"        -> alignment gap
+        "invalid"    -> unsupported character
+    """
+
+    if character in CANONICAL_BASES:
+        return "canonical"
+
+    if character in IUPAC_AMBIGUOUS_BASES:
+        return "ambiguous"
+
+    if character in GAP_SYMBOLS:
+        return "gap"
+
+    return "invalid"
+
+
+
+
+
+def classify_sequence(sequence):
+    """
+    Classify every character in a DNA sequence.
+
+    Returns a dictionary containing the positions and characters
+    belonging to each category.
+
+    Positions are 1-based to make the output easier to interpret
+    in biological reports.
     """
 
     sequence = sequence.upper()
 
-    valid_bases = {"A", "T", "G", "C", "N"}
+    classification = {
+        "canonical": [],
+        "ambiguous": [],
+        "gap": [],
+        "invalid": []
+    }
 
-    return all(base in valid_bases for base in sequence)
+    for position, character in enumerate(sequence, start=1):
+
+        category = classify_character(character)
+
+        classification[category].append({
+            "position": position,
+            "character": character
+        })
+
+    return classification
+
+
+
+
+
+
+
+def validate_dna(sequence):
+    """
+    Validate whether a sequence contains only accepted
+    DNA-related symbols.
+    """
+
+    sequence = sequence.upper()
+
+    if sequence == "":
+        return False
+
+    return all(
+        classify_character(character) != "invalid"
+        for character in sequence
+    )
+
 
 
 
 
 def find_invalid_bases(sequence):
     """
-    Identify characters that are not accepted DNA bases.
+    Identify unsupported characters in a DNA sequence.
     """
 
     sequence = sequence.upper()
 
-    valid_bases = {"A", "T", "G", "C", "N"}
-
-    invalid_bases = sorted(
-        set(base for base in sequence if base not in valid_bases)
+    return sorted(
+        set(
+            character
+            for character in sequence
+            if classify_character(character) == "invalid"
+        )
     )
-
-    return invalid_bases
-
-
-
-
-
 
 
 
@@ -49,151 +140,479 @@ def calculate_length(sequence):
     return len(sequence)
 
 
+
+
+
 def count_bases(sequence):
     """
-    Count the occurrences of each base in a DNA sequence.
+    Count canonical DNA bases.
 
-    Returns a dictionary with bases as keys and their counts as values.
+    Returns counts for:
+        A, T, G and C.
     """
+
     sequence = sequence.upper()
-    counts={"A": sequence.count("A"),
-             "T": sequence.count("T"),
-             "G": sequence.count("G"),
-             "C": sequence.count("C"),
-             "N": sequence.count("N")}
+
+    classification = classify_sequence(sequence)
+
+    counts = {
+        "A": 0,
+        "T": 0,
+        "G": 0,
+        "C": 0
+    }
+
+    for item in classification["canonical"]:
+        base = item["character"]
+        counts[base] += 1
+
     return counts
+
+
+
+
+
+def count_ambiguous_bases(sequence):
+    """
+    Count IUPAC ambiguity codes in a DNA sequence.
+
+    Returns counts for:
+        N, R, Y, S, W, K, M, B, D, H, V
+    """
+
+    sequence = sequence.upper()
+
+    classification = classify_sequence(sequence)
+
+    counts = {
+        base: 0
+        for base in sorted(IUPAC_AMBIGUOUS_BASES)
+    }
+
+    for item in classification["ambiguous"]:
+        base = item["character"]
+        counts[base] += 1
+
+    return counts
+
+
 
 
 def gc_content(sequence):
     """
-    Calculate the GC content of a DNA sequence.
+    Calculate GC content among canonical DNA bases only.
 
-    GC content is the percentage of bases that are either G or C.
+    Formula:
+
+        GC% = (G + C) / (A + T + G + C) * 100
+
+    Ambiguous bases, gaps and invalid characters are excluded
+    from the denominator.
     """
-    sequence = sequence.upper()
-    gc_count = sequence.count("G") + sequence.count("C")
-    total_count = len(sequence)
 
-    if total_count == 0:
+    counts = count_bases(sequence)
+
+    canonical_count = sum(counts.values())
+
+    gc_count = counts["G"] + counts["C"]
+
+    if canonical_count == 0:
         return 0.0
 
-    return round((gc_count / total_count) * 100, 2)
+    return round((gc_count / canonical_count) * 100, 2)
+
+
+
+
+
+
+
+
+
 
 
 
 
 def calculate_n_content(sequence):
     """
-    Calculate the N content of a DNA sequence.
+    Calculate the percentage of sequence positions
+    represented specifically by N.
 
-    N content is the percentage of bases that are N (unknown/ambiguous).
+    N represents an unknown nucleotide.
     """
-    sequence = sequence.upper()
-    n_count = sequence.count("N")
-    total_count = len(sequence)
 
-    if total_count == 0:
+    sequence = sequence.upper()
+
+    n_count = sequence.count("N")
+    total_length = len(sequence)
+
+    if total_length == 0:
         return 0.0
 
-    return round((n_count / total_count) * 100, 2)
+    return round(
+        (n_count / total_length) * 100,
+        2
+    )
 
 
 def calculate_at_content(sequence):
     """
-    Calculate the AT content of a DNA sequence.
+    Calculate AT content among canonical DNA bases only.
 
-    AT content is the percentage of bases that are either A or T.
+    Formula:
+
+        AT% = (A + T) / (A + T + G + C) * 100
     """
-    sequence = sequence.upper()
-    at_count = sequence.count("A") + sequence.count("T")
-    total_count = len(sequence)
 
-    if total_count == 0:
+    counts = count_bases(sequence)
+
+    canonical_count = sum(counts.values())
+
+    at_count = counts["A"] + counts["T"]
+
+    if canonical_count == 0:
         return 0.0
 
-    return round((at_count / total_count) * 100, 2)
+    return round((at_count / canonical_count) * 100, 2)
+
+
+
+def calculate_percentage(count, total):
+    """
+    Calculate a percentage safely.
+
+    Returns 0.0 when the denominator is zero.
+    """
+
+    if total == 0:
+        return 0.0
+
+    return round((count / total) * 100, 2)
+
+
+
+
+
+def calculate_canonical_percentage(sequence):
+    """
+    Calculate the percentage of sequence positions
+    represented by canonical bases A, T, G and C.
+    """
+
+    sequence = sequence.upper()
+
+    classification = classify_sequence(sequence)
+
+    canonical_count = len(classification["canonical"])
+    total_length = len(sequence)
+
+    return calculate_percentage(
+        canonical_count,
+        total_length
+    )
+
+
+
+
+def calculate_gap_percentage(sequence):
+    """
+    Calculate the percentage of sequence positions
+    represented by alignment gaps.
+    """
+
+    sequence = sequence.upper()
+
+    classification = classify_sequence(sequence)
+
+    gap_count = len(classification["gap"])
+    total_length = len(sequence)
+
+    return calculate_percentage(
+        gap_count,
+        total_length
+    )
+
+
+
+def calculate_invalid_percentage(sequence):
+    """
+    Calculate the percentage of sequence positions
+    containing unsupported characters.
+    """
+
+    sequence = sequence.upper()
+
+    classification = classify_sequence(sequence)
+
+    invalid_count = len(classification["invalid"])
+    total_length = len(sequence)
+
+    return calculate_percentage(
+        invalid_count,
+        total_length
+    )
+
+
+
+def calculate_ambiguity_percentage(sequence):
+    """
+    Calculate the percentage of sequence positions represented
+    by IUPAC ambiguity codes.
+
+    Ambiguous bases include:
+        N, R, Y, S, W, K, M, B, D, H, V
+
+    Formula:
+
+        Ambiguity% =
+        ambiguous bases / total sequence length * 100
+    """
+
+    sequence = sequence.upper()
+
+    classification = classify_sequence(sequence)
+
+    ambiguous_count = len(classification["ambiguous"])
+    total_length = len(sequence)
+
+    if total_length == 0:
+        return 0.0
+
+    return round(
+        (ambiguous_count / total_length) * 100,
+        2
+    )
+
 
 
 
 
 def calculate_base_composition(sequence):
     """
-    Calculate the base composition of a DNA sequence.
+    Calculate the percentage composition of every recognised
+    DNA character category.
 
-    Returns a dictionary with bases as keys and their percentage composition as values.
+    Percentages are calculated relative to the total sequence length.
+
+    Categories include:
+        Canonical bases: A, T, G, C
+        IUPAC ambiguity codes: N, R, Y, S, W, K, M, B, D, H, V
+        Gaps: -
+        Invalid characters are excluded from the composition dictionary.
     """
+
     sequence = sequence.upper()
-    total_count = len(sequence)
 
-    if total_count == 0:
-        return {"A": 0.0, "T": 0.0, "G": 0.0, "C": 0.0, "N": 0.0}
+    classification = classify_sequence(sequence)
 
-    composition = {
-        "A": round((sequence.count("A") / total_count) * 100, 2),
-        "T": round((sequence.count("T") / total_count) * 100, 2),
-        "G": round((sequence.count("G") / total_count) * 100, 2),
-        "C": round((sequence.count("C") / total_count) * 100, 2),
-        "N": round((sequence.count("N") / total_count) * 100, 2)
-    }
+    total_length = len(sequence)
+
+    if total_length == 0:
+        return {}
+
+    composition = {}
+
+    # Canonical bases
+    for base in sorted(CANONICAL_BASES):
+
+        count = sum(
+            1
+            for item in classification["canonical"]
+            if item["character"] == base
+        )
+
+        composition[base] = calculate_percentage(
+            count,
+            total_length
+        )
+
+    # IUPAC ambiguity codes
+    for base in sorted(IUPAC_AMBIGUOUS_BASES):
+
+        count = sum(
+            1
+            for item in classification["ambiguous"]
+            if item["character"] == base
+        )
+
+        composition[base] = calculate_percentage(
+            count,
+            total_length
+        )
+
+    # Alignment gaps
+    gap_count = len(classification["gap"])
+
+    composition["-"] = calculate_percentage(
+        gap_count,
+        total_length
+    )
 
     return composition
 
 
 
-def calculate_known_base_percentage(sequence):
-    """
-    Calculate the percentage of known DNA bases
-    (A, T, G, C) in a sequence.
-    """
-    sequence = sequence.upper()
 
-    length = len(sequence)
 
-    if length == 0:
-        return 0
 
-    known_count = (
-        sequence.count("A")
-        + sequence.count("T")
-        + sequence.count("G")
-        + sequence.count("C")
-    )
 
-    known_percentage = round((known_count / length) * 100, 2)
-
-    return known_percentage
 
 
 
 
 def generate_qc_summary(sequence):
     """
-    Generate a basic quality-control summary
-    for a DNA sequence.
+    Generate a complete DNA sequence quality-control summary.
+
+    The sequence is classified once. All QC counts and percentages
+    are derived from this single classification.
+
+    This avoids repeatedly scanning and classifying the same sequence.
     """
 
     sequence = sequence.upper()
 
-    valid = validate_dna(sequence)
-    invalid_bases = find_invalid_bases(sequence)
+    # Classify the sequence once
+    classification = classify_sequence(sequence)
+
+    # Count each category
+    canonical_count = len(classification["canonical"])
+    ambiguous_count = len(classification["ambiguous"])
+    gap_count = len(classification["gap"])
+    invalid_count = len(classification["invalid"])
+
+    # Total sequence length
+    total_length = len(sequence)
+
+    # Identify unique invalid characters
+    invalid_bases = sorted(
+        set(
+            item["character"]
+            for item in classification["invalid"]
+        )
+    )
+
+    # Count individual canonical bases
+    base_counts = {
+        "A": 0,
+        "T": 0,
+        "G": 0,
+        "C": 0
+    }
+
+    for item in classification["canonical"]:
+        base = item["character"]
+        base_counts[base] += 1
+
+    # Count individual IUPAC ambiguity codes
+    ambiguous_counts = {
+        base: 0
+        for base in sorted(IUPAC_AMBIGUOUS_BASES)
+    }
+
+    for item in classification["ambiguous"]:
+        base = item["character"]
+        ambiguous_counts[base] += 1
+
+    # Calculate percentages
+    canonical_percentage = calculate_percentage(
+        canonical_count,
+        total_length
+    )
+
+    ambiguous_percentage = calculate_percentage(
+        ambiguous_count,
+        total_length
+    )
+
+    gap_percentage = calculate_percentage(
+        gap_count,
+        total_length
+    )
+
+    invalid_percentage = calculate_percentage(
+        invalid_count,
+        total_length
+    )
+
+    n_count = ambiguous_counts["N"]
+
+    n_percentage = calculate_percentage(
+        n_count,
+        total_length
+    )
+
+    # GC and AT percentages are calculated only
+    # among canonical A/T/G/C bases.
+    canonical_total = sum(base_counts.values())
+
+    gc_percentage = calculate_percentage(
+        base_counts["G"] + base_counts["C"],
+        canonical_total
+    )
+
+    at_percentage = calculate_percentage(
+        base_counts["A"] + base_counts["T"],
+        canonical_total
+    )
+
+
+    # Calculate complement information only when
+    # the sequence contains no unsupported characters.
+    if invalid_count == 0:
+
+        complement = calculate_complement(sequence)
+
+        reverse_complement = calculate_reverse_complement(sequence)
+
+    else:
+
+        complement = None
+
+        reverse_complement = None
 
     summary = {
         "sequence": sequence,
-        "valid": valid,
+
+        "length": total_length,
+
+        "valid": (
+            total_length > 0
+            and invalid_count == 0
+        ),
+
         "invalid_bases": invalid_bases,
-        "length": calculate_length(sequence)
+
+        "base_counts": base_counts,
+
+        "ambiguous_counts": ambiguous_counts,
+
+        "character_counts": {
+            "canonical": canonical_count,
+            "ambiguous": ambiguous_count,
+            "gaps": gap_count,
+            "invalid": invalid_count
+        },
+
+        "percentages": {
+            "canonical": canonical_percentage,
+            "ambiguous": ambiguous_percentage,
+            "gaps": gap_percentage,
+            "invalid": invalid_percentage
+        },
+
+        "n_content": n_percentage,
+
+        "gc_content": gc_percentage,
+
+        "at_content": at_percentage,
+
+        "complement": complement,
+
+        "reverse_complement": reverse_complement,
+
+        "classification": classification
     }
-
-    if valid:
-        summary["base_counts"] = count_bases(sequence)
-        summary["gc_content"] = gc_content(sequence)
-        summary["at_content"] = calculate_at_content(sequence)
-        summary["n_content"] = calculate_n_content(sequence)
-        summary["known_base_percentage"] = calculate_known_base_percentage(sequence)
-        summary["base_percentages"] = calculate_base_composition(sequence)
-
-        summary["complement"] = calculate_complement(sequence)
-        summary["reverse_complement"] = calculate_reverse_complement(sequence)
     summary["qc_status"] = determine_qc_status(summary)
     return summary
 
@@ -203,73 +622,86 @@ def generate_qc_summary(sequence):
 
 
 
+
+
+
 def determine_qc_status(summary):
     """
-    Determine the quality-control status of a DNA sequence.
+    Determine the validation status of a DNA sequence.
 
-    Returns:
-        FAIL if the sequence contains invalid bases.
-        PASS WITH WARNING if the sequence contains ambiguous bases (N).
-        PASS if the sequence is valid and contains no ambiguous bases.
+    This function evaluates whether the sequence contains
+    unsupported characters.
+
+    It does not impose biological quality thresholds such as
+    maximum N content or minimum GC content. Those thresholds
+    depend on the specific experiment and analysis pipeline.
     """
 
-    if not summary["valid"]:
+    if summary["length"] == 0:
         return "FAIL"
 
-    if summary["n_content"] > 0:
-        return "PASS WITH WARNING"
+    if summary["invalid_bases"]:
+        return "FAIL"
 
     return "PASS"
 
 
 
 
-
 def print_qc_report(summary):
     """
-    Print a human-readable quality-control report.
+    Print a human-readable DNA sequence quality-control report.
     """
 
     print("\n========== DNA SEQUENCE QC REPORT ==========")
 
-    print("Sequence:", summary["sequence"])
-    print("Valid DNA:", summary["valid"])
-    print("Length:", summary["length"], "bp")
-    print("QC Status:", summary["qc_status"])
-    if not summary["valid"]:
-        print("\nValidation:")
-        print("  Status: FAIL")
-        print("  Invalid bases:", ", ".join(summary["invalid_bases"]))
+    print("\nSequence:")
+    print(" ", summary["sequence"])
 
-        print("\nQC Status: FAIL")
-        print("============================================")
+    print("\nSequence Statistics:")
+    print("  Length:", summary["length"], "bp")
+    print("  QC Status:", summary["qc_status"])
+    print("  Valid:", summary["valid"])
 
-        return
+    print("\nCharacter Counts:")
+    print("  Canonical:", summary["character_counts"]["canonical"])
+    print("  Ambiguous:", summary["character_counts"]["ambiguous"])
+    print("  Gaps:", summary["character_counts"]["gaps"])
+    print("  Invalid:", summary["character_counts"]["invalid"])
 
-    print("\nValidation:")
-    print("  Status: PASS")
+    print("\nPercentages:")
+    print("  Canonical:", summary["percentages"]["canonical"], "%")
+    print("  Ambiguous:", summary["percentages"]["ambiguous"], "%")
+    print("  Gaps:", summary["percentages"]["gaps"], "%")
+    print("  Invalid:", summary["percentages"]["invalid"], "%")
 
-    print("\nBase Counts:")
+    print("\nCanonical Base Counts:")
     for base, count in summary["base_counts"].items():
         print(f"  {base}: {count}")
 
-    print("\nBase Composition:")
-    for base, percentage in summary["base_percentages"].items():
-        print(f"  {base}: {percentage}%")
+    print("\nAmbiguous Base Counts:")
+    for base, count in summary["ambiguous_counts"].items():
+        print(f"  {base}: {count}")
 
-    print("\nSequence Statistics:")
+    print("\nSequence Composition:")
     print("  GC Content:", summary["gc_content"], "%")
     print("  AT Content:", summary["at_content"], "%")
     print("  N Content:", summary["n_content"], "%")
-    print("  Known Bases:", summary["known_base_percentage"], "%")
 
-    print("\nComplement:", summary["complement"])
-    print("Reverse Complement:", summary["reverse_complement"])
+    print("\nInvalid Characters:")
 
-    print("\nQC Status:", summary["qc_status"])
-    print("============================================")
+    if summary["invalid_bases"]:
+        print(" ", ", ".join(summary["invalid_bases"]))
+    else:
+        print("  None")
 
+    print("\nComplement:")
+    print(" ", summary["complement"])
 
+    print("\nReverse Complement:")
+    print(" ", summary["reverse_complement"])
+
+    print("\n============================================")
 
 
 
@@ -278,26 +710,37 @@ def print_qc_report(summary):
 
 def calculate_complement(sequence):
     """
-    Calculate the complement of a DNA sequence.
+    Calculate the DNA complement of a sequence.
 
-    A <-> T
-    G <-> C
-    N -> N (remains unchanged)
+    Supports:
+        - Canonical DNA bases
+        - IUPAC ambiguity codes
+        - Alignment gaps
+
+    Raises:
+        ValueError: If the sequence contains an unsupported character.
     """
 
-    sequence= sequence.upper()
+    sequence = sequence.upper()
 
-    complement={
-        "A": "T",
-        "T": "A",
-        "G": "C",
-        "C": "G",
-        "N": "N"
-    }
+    invalid_characters = [
+        character
+        for character in sequence
+        if character not in COMPLEMENT_MAP
+    ]
 
-    return "".join(complement[base] for base in sequence)
+    if invalid_characters:
+        invalid_characters = sorted(set(invalid_characters))
 
+        raise ValueError(
+            f"Unsupported character(s) for complement: "
+            f"{', '.join(invalid_characters)}"
+        )
 
+    return "".join(
+        COMPLEMENT_MAP[character]
+        for character in sequence
+    )
 
 
 def calculate_reverse_complement(sequence):
@@ -313,16 +756,10 @@ def calculate_reverse_complement(sequence):
 
 
 
-
-
-
-
-    
 if __name__ == "__main__":
-    sequence = "ATGCNA"
 
-   
+    sequence = "ATGCNRY-SW"
+
     summary = generate_qc_summary(sequence)
 
     print_qc_report(summary)
-    
