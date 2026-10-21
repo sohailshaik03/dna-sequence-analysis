@@ -87,7 +87,7 @@ The parser supports:
 - Sequence identifiers and optional descriptions
 - Blank lines
 - Uppercase normalisation
-- Error reporting for malformed input, including missing identifiers and empty sequence records
+- Error reporting for malformed input, including missing identifiers, empty sequence records, and internal whitespace in sequence lines
 
 Example input:
 
@@ -125,7 +125,7 @@ Average length: 6.0 bp
 
 The example assumes that `data/example.fasta` exists. Replace the path with the location of your own FASTA file.
 
-The CLI reports user-facing errors for file-access problems and malformed FASTA input.
+The CLI reports user-facing errors for file-access problems and malformed FASTA input, without exposing a Python traceback for these expected errors.
 
 ## Project Structure
 
@@ -176,7 +176,7 @@ Run a specific test module:
 PYTHONPATH=src /usr/bin/python3 -m pytest tests/test_fasta_parser.py -v
 ```
 
-The latest verified test suite contains **106 passing tests**. This count reflects the current development state and may change as new features and tests are added.
+The latest verified test suite contains **112 passing tests**. This count reflects the last confirmed full test run and may change as new features and tests are added.
 
 ## Technologies
 
