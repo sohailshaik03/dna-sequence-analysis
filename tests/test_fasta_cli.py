@@ -59,3 +59,13 @@ def test_cli_reports_missing_file(tmp_path):
     assert result.returncode == 2
     assert "No such file or directory" in result.stderr
     assert "Traceback" not in result.stderr
+
+def test_cli_reports_malformed_fasta(tmp_path):
+    fasta_file = tmp_path / "malformed.fasta"
+    fasta_file.write_text("ATGC\n")
+
+    result = run_cli(fasta_file)
+
+    assert result.returncode == 2
+    assert "sequence found before header" in result.stderr
+    assert "Traceback" not in result.stderr
