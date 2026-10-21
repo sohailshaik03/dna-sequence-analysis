@@ -115,3 +115,46 @@ def test_empty_sequence_record_raises_error(tmp_path):
 
     with pytest.raises(ValueError, match="empty sequence"):
         parse_fasta(fasta_file)
+
+
+def test_parse_lowercase_sequence_as_uppercase(tmp_path):
+    fasta_file = tmp_path / "lowercase.fasta"
+    fasta_file.write_text(
+        ">seq1 Lowercase sequence\n"
+        "atgc\n"
+        "gtaa\n"
+    )
+
+    records = parse_fasta(fasta_file)
+
+    assert records[0]["sequence"] == "ATGCGTAA"
+
+
+def test_parse_fasta_with_blank_lines(tmp_path):
+    fasta_file = tmp_path / "blank_lines.fasta"
+    fasta_file.write_text(
+        "\n"
+        ">seq1 First sequence\n"
+        "ATGC\n"
+        "\n"
+        "GTAA\n"
+        "\n"
+        ">seq2 Second sequence\n"
+        "\n"
+        "CCGG\n"
+        "\n"
+    )
+
+    records = parse_fasta(fasta_file)
+
+    assert len(records) == 2
+    assert records[0]["sequence"] == "ATGCGTAA"
+    assert records[1]["sequence"] == "CCGG"
+
+
+
+def test_missing_fasta_file_raises_error(tmp_path):
+    fasta_file = tmp_path / "does_not_exist.fasta"
+
+    with pytest.raises(FileNotFoundError):
+        parse_fasta(fasta_file)
