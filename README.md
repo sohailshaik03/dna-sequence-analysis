@@ -2,7 +2,7 @@
 
 A Python-based bioinformatics toolkit for DNA sequence validation, nucleotide composition analysis, sequence quality control (QC), FASTA parsing, batch analysis, and complementary sequence generation.
 
-This project is being developed as a practical computational biology portfolio project, with emphasis on scientific correctness, reproducible analysis, automated testing, and maintainable code.
+This project is a practical computational biology portfolio project focused on scientific correctness, reproducible analysis, automated testing, and maintainable code.
 
 ## Project Overview
 
@@ -162,11 +162,37 @@ dna-sequence-analysis/
 - `fasta_cli.py`: terminal interface for running the analysis.
 - `tests/`: automated verification of the individual modules and integrated workflow.
 
-## Running the Tests
+## Installation and Testing
 
-The project uses `pytest` for automated testing. Install the project and its test dependency from the repository root using the editable installation below.
+### Requirements
 
-### 1. Install the project
+- Python 3.9 or later
+- pip
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/sohailshaik03/dna-sequence-analysis.git
+cd dna-sequence-analysis
+```
+
+### 2. Create and activate a virtual environment
+
+On macOS or Linux:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+On Windows PowerShell:
+
+```powershell
+py -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+### 3. Install the project and test dependencies
 
 ```bash
 python -m pip install -e ".[test]"
@@ -174,21 +200,25 @@ python -m pip install -e ".[test]"
 
 This installs the toolkit in editable mode and registers the `fasta-qc` command.
 
-### 2. Run the complete test suite
+### 4. Run the example analysis
+
+```bash
+fasta-qc data/example.fasta
+```
+
+### 5. Run the complete test suite
 
 ```bash
 python -m pytest -v
 ```
 
-### 3. Run a specific test module
-
-For example, to test the FASTA parser:
+To run only the FASTA parser tests:
 
 ```bash
 python -m pytest tests/test_fasta_parser.py -v
 ```
 
-The latest verified full test suite contains **112 passing tests**. This count reflects the last confirmed full test run and may change as new features and tests are added.
+The latest verified full test suite contains **117 passing tests**. This count should be updated if the test suite changes.
 
 ## Technologies
 
@@ -206,7 +236,7 @@ The latest verified full test suite contains **112 passing tests**. This count r
 5. **Regression testing:** automated tests help detect unintended changes.
 6. **Separation of QC and interpretation:** the toolkit reports sequence characteristics without imposing experiment-specific biological thresholds.
 
-## Current Limitations and Future Development
+## - Formal packaging and installation as a command-line application
 
 The current implementation focuses on basic DNA sequence QC and FASTA processing. It does not yet implement:
 
