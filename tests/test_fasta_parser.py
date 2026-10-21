@@ -172,3 +172,11 @@ def test_parser_rejects_internal_sequence_whitespace(tmp_path):
 
     with pytest.raises(ValueError, match="whitespace"):
         parse_fasta(fasta_file)
+
+
+def test_whitespace_only_header_raises_error(tmp_path):
+    fasta_file = tmp_path / "whitespace_header.fasta"
+    fasta_file.write_text(">   \nATGC\n")
+
+    with pytest.raises(ValueError, match="identifier"):
+        parse_fasta(fasta_file)
