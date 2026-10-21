@@ -158,3 +158,17 @@ def test_missing_fasta_file_raises_error(tmp_path):
 
     with pytest.raises(FileNotFoundError):
         parse_fasta(fasta_file)
+
+
+
+
+
+def test_parser_rejects_internal_sequence_whitespace(tmp_path):
+    fasta_file = tmp_path / "internal_whitespace.fasta"
+    fasta_file.write_text(
+        ">seq1\n"
+        "AT GC\n"
+    )
+
+    with pytest.raises(ValueError, match="whitespace"):
+        parse_fasta(fasta_file)

@@ -25,7 +25,7 @@ def parse_fasta(file_path):
             "sequence": "".join(sequence_lines).upper()
         })
 
-    with open(file_path, "r") as file:
+    with open(file_path, "r", encoding="utf-8") as file:
         for line in file:
             line = line.strip()
 
@@ -53,6 +53,12 @@ def parse_fasta(file_path):
                 if sequence_id is None:
                     raise ValueError(
                         "Invalid FASTA file: sequence found before header."
+                    )
+
+                if any(char.isspace() for char in line):
+                    raise ValueError(
+                        "Invalid FASTA file: internal whitespace "
+                        "found in sequence."
                     )
 
                 sequence_lines.append(line)
