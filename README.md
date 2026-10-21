@@ -107,7 +107,7 @@ Run the CLI from the repository root.
 Analyse a FASTA file:
 
 ```bash
-PYTHONPATH=src /usr/bin/python3 -m fasta_cli data/example.fasta
+fasta-qc data/example.fasta
 ```
 
 The command reports each sequence's identifier, description, length, GC content, and QC status, followed by batch statistics.
@@ -147,6 +147,8 @@ dna-sequence-analysis/
 │   └── test_fasta_cli.py
 ├── .gitattributes
 ├── .gitignore
+├── pyproject.toml
+├── requirements.txt
 └── README.md
 ```
 
@@ -162,20 +164,20 @@ dna-sequence-analysis/
 
 ## Running the Tests
 
-The project uses `pytest` for automated testing. The required test dependency is pinned in `requirements.txt`.
+The project uses `pytest` for automated testing. Install the project and its test dependency from the repository root using the editable installation below.
 
-### 1. Install the dependency
-
-From the repository root, run:
+### 1. Install the project
 
 ```bash
-/usr/bin/python3 -m pip install -r requirements.txt
+python -m pip install -e ".[test]"
 ```
+
+This installs the toolkit in editable mode and registers the `fasta-qc` command.
 
 ### 2. Run the complete test suite
 
 ```bash
-PYTHONPATH=src /usr/bin/python3 -m pytest -v
+python -m pytest -v
 ```
 
 ### 3. Run a specific test module
@@ -183,7 +185,7 @@ PYTHONPATH=src /usr/bin/python3 -m pytest -v
 For example, to test the FASTA parser:
 
 ```bash
-PYTHONPATH=src /usr/bin/python3 -m pytest tests/test_fasta_parser.py -v
+python -m pytest tests/test_fasta_parser.py -v
 ```
 
 The latest verified full test suite contains **112 passing tests**. This count reflects the last confirmed full test run and may change as new features and tests are added.
