@@ -1,6 +1,4 @@
-import pytest
-
-from fasta_analysis import analyse_fasta, summarise_batch
+from src.fasta_analysis import analyse_fasta, summarise_batch
 
 def test_analyse_single_fasta_record(tmp_path):
     fasta_file = tmp_path / "single.fasta"
