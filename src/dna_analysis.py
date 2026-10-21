@@ -460,6 +460,7 @@ def calculate_base_composition(sequence):
 
 
 
+
 def generate_qc_summary(sequence):
     """
     Generate a complete DNA sequence quality-control summary.

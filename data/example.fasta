@@ -1,0 +1,6 @@
+>seq1 Valid DNA sequence
+ATGCATGC
+>seq2 DNA with ambiguous bases
+ATGCNN
+>seq3 DNA with invalid character
+ATGX
