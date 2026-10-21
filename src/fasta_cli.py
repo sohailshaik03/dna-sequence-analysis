@@ -6,7 +6,11 @@ from fasta_analysis import analyse_fasta, summarise_batch
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Analyse DNA sequences in a FASTA file."
+        description=(
+    "Analyse DNA sequences in a FASTA file, report "
+    "per-sequence quality control (QC) results, "
+    "and summarise the batch."
+)
     )
 
     parser.add_argument(
