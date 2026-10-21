@@ -162,21 +162,31 @@ dna-sequence-analysis/
 
 ## Running the Tests
 
-The project uses `pytest`.
+The project uses `pytest` for automated testing. The required test dependency is pinned in `requirements.txt`.
 
-Run the complete test suite from the repository root:
+### 1. Install the dependency
+
+From the repository root, run:
+
+```bash
+/usr/bin/python3 -m pip install -r requirements.txt
+```
+
+### 2. Run the complete test suite
 
 ```bash
 PYTHONPATH=src /usr/bin/python3 -m pytest -v
 ```
 
-Run a specific test module:
+### 3. Run a specific test module
+
+For example, to test the FASTA parser:
 
 ```bash
 PYTHONPATH=src /usr/bin/python3 -m pytest tests/test_fasta_parser.py -v
 ```
 
-The latest verified test suite contains **112 passing tests**. This count reflects the last confirmed full test run and may change as new features and tests are added.
+The latest verified full test suite contains **112 passing tests**. This count reflects the last confirmed full test run and may change as new features and tests are added.
 
 ## Technologies
 
