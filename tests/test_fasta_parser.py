@@ -180,3 +180,18 @@ def test_whitespace_only_header_raises_error(tmp_path):
 
     with pytest.raises(ValueError, match="identifier"):
         parse_fasta(fasta_file)
+
+
+
+def test_header_identifier_and_description_are_normalised(tmp_path):
+    fasta_file = tmp_path / "header_whitespace.fasta"
+    fasta_file.write_text(
+        ">  gene_A   Example gene description   \n"
+        "ATGC\n"
+    )
+
+    records = parse_fasta(fasta_file)
+
+    assert records[0]["id"] == "gene_A"
+    assert records[0]["description"] == "Example gene description"
+    assert records[0]["sequence"] == "ATGC"
