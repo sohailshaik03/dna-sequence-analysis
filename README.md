@@ -1,7 +1,7 @@
 # fasta-qc
 
 [![Tests](https://github.com/sohailshaik03/fasta-qc/actions/workflows/tests.yml/badge.svg)](https://github.com/sohailshaik03/fasta-qc/actions/workflows/tests.yml)
-![Python 3.9–3.13](https://img.shields.io/badge/python-3.9%E2%80%933.13-blue)
+![Python 3.10–3.13](https://img.shields.io/badge/python-3.10%E2%80%933.13-blue)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 A tested Python command-line tool and library for DNA sequence validation, nucleotide composition analysis, FASTA parsing and batch quality control (QC). It has no runtime dependencies beyond the Python standard library.
@@ -11,7 +11,7 @@ pip install -e ".[test]"
 fasta-qc data/example.fasta
 ```
 
-The project focuses on scientific correctness, explicit QC rules, automated testing and maintainable code: 117 tests run on every push across Python 3.9–3.13.
+The project focuses on scientific correctness, explicit QC rules, automated testing and maintainable code: 117 tests run on every push across Python 3.10–3.13.
 
 ## Project Overview
 
@@ -176,7 +176,7 @@ fasta-qc/
 
 ### Requirements
 
-- Python 3.9 or later
+- Python 3.10 or later
 - pip
 
 ### 1. Clone the repository
@@ -228,7 +228,7 @@ To run only the FASTA parser tests:
 python -m pytest tests/test_fasta_parser.py -v
 ```
 
-The suite contains **117 tests**. GitHub Actions runs them, plus the example CLI command, on every push and pull request for Python 3.9, 3.10, 3.11, 3.12 and 3.13.
+The suite contains **117 tests**. GitHub Actions runs them, plus the example CLI command, on every push and pull request for Python 3.10, 3.11, 3.12 and 3.13.
 
 ## Technologies
 
