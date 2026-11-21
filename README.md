@@ -1,8 +1,17 @@
-# DNA Sequence Analysis Toolkit
+# fasta-qc
 
-A Python-based bioinformatics toolkit for DNA sequence validation, nucleotide composition analysis, sequence quality control (QC), FASTA parsing, batch analysis, and complementary sequence generation.
+[![Tests](https://github.com/sohailshaik03/fasta-qc/actions/workflows/tests.yml/badge.svg)](https://github.com/sohailshaik03/fasta-qc/actions/workflows/tests.yml)
+![Python 3.9–3.13](https://img.shields.io/badge/python-3.9%E2%80%933.13-blue)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-This project is a practical computational biology portfolio project focused on scientific correctness, reproducible analysis, automated testing, and maintainable code.
+A tested Python command-line tool and library for DNA sequence validation, nucleotide composition analysis, FASTA parsing and batch quality control (QC). It has no runtime dependencies beyond the Python standard library.
+
+```bash
+pip install -e ".[test]"
+fasta-qc data/example.fasta
+```
+
+The project focuses on scientific correctness, explicit QC rules, automated testing and maintainable code: 117 tests run on every push across Python 3.9–3.13.
 
 ## Project Overview
 
@@ -130,9 +139,9 @@ The CLI reports user-facing errors for file-access problems and malformed FASTA 
 ## Project Structure
 
 ```text
-dna-sequence-analysis/
-├── .vscode/
-│   └── settings.json
+fasta-qc/
+├── .github/workflows/
+│   └── tests.yml
 ├── data/
 │   └── example.fasta
 ├── src/
@@ -147,12 +156,13 @@ dna-sequence-analysis/
 │   └── test_fasta_cli.py
 ├── .gitattributes
 ├── .gitignore
+├── LICENSE
 ├── pyproject.toml
 ├── requirements.txt
 └── README.md
 ```
 
-`data/example.fasta` is a local demonstration file. The `.vscode/settings.json` file configures Python analysis to recognise the `src/` directory.
+`data/example.fasta` is a small demonstration file.
 
 ### Module Responsibilities
 
@@ -172,8 +182,8 @@ dna-sequence-analysis/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/sohailshaik03/dna-sequence-analysis.git
-cd dna-sequence-analysis
+git clone https://github.com/sohailshaik03/fasta-qc.git
+cd fasta-qc
 ```
 
 ### 2. Create and activate a virtual environment
@@ -218,14 +228,13 @@ To run only the FASTA parser tests:
 python -m pytest tests/test_fasta_parser.py -v
 ```
 
-The latest verified full test suite contains **117 passing tests**. This count should be updated if the test suite changes.
+The suite contains **117 tests**. GitHub Actions runs them, plus the example CLI command, on every push and pull request for Python 3.9, 3.10, 3.11, 3.12 and 3.13.
 
 ## Technologies
 
-- Python 3
+- Python 3 (standard library only at runtime)
 - pytest
-- Git and GitHub
-- Visual Studio Code
+- GitHub Actions
 
 ## Design Principles
 
@@ -236,9 +245,9 @@ The latest verified full test suite contains **117 passing tests**. This count s
 5. **Regression testing:** automated tests help detect unintended changes.
 6. **Separation of QC and interpretation:** the toolkit reports sequence characteristics without imposing experiment-specific biological thresholds.
 
-## - Formal packaging and installation as a command-line application
+## Limitations and Possible Extensions
 
-The current implementation focuses on basic DNA sequence QC and FASTA processing. It does not yet implement:
+The current implementation focuses on DNA sequence QC and FASTA processing. It does not yet implement:
 
 - Open reading frame (ORF) identification
 - Codon analysis and translation
@@ -246,15 +255,16 @@ The current implementation focuses on basic DNA sequence QC and FASTA processing
 - GC-content visualisation
 - Configurable biological QC thresholds
 - Large-scale performance benchmarking
-- Continuous integration with GitHub Actions
-- Formal packaging and installation as a command-line application
+- Publication to PyPI
 
 These are potential future extensions rather than current features.
 
+## Licence
+
+Released under the [MIT Licence](LICENSE).
+
 ## Author
 
-**Sohail**
+**Sohail Shaik**, MSc Bioinformatics (Distinction), University of West London
 
-MSc Bioinformatics
-
-This project is part of a broader portfolio focused on computational biology, bioinformatics, data analysis, and reproducible scientific programming.
+Part of a portfolio focused on computational biology, bioinformatics and reproducible scientific programming. More at [sohail-shaik-bioinformatics.vercel.app](https://sohail-shaik-bioinformatics.vercel.app).
