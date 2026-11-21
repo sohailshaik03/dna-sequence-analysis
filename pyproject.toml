@@ -3,11 +3,17 @@ requires = ["setuptools>=61,<76"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "dna-sequence-analysis"
+name = "fasta-qc"
 version = "0.1.0"
-description = "A Python toolkit for DNA sequence quality control and FASTA analysis"
-requires-python = ">=3.9"
+description = "A tested command-line tool for DNA sequence validation and FASTA quality control"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [{name = "Sohail Shaik"}]
+requires-python = ">=3.10"
 dependencies = []
+
+[project.urls]
+Repository = "https://github.com/sohailshaik03/fasta-qc"
 
 [project.optional-dependencies]
 test = ["pytest==8.4.2"]
